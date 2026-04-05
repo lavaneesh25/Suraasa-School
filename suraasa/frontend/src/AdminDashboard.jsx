@@ -52,6 +52,9 @@ export default function AdminDashboard({ onClose, onDataChange }) {
   const [editGalleryFile, setEditGalleryFile] = useState(null)
   const [editGalleryPreview, setEditGalleryPreview] = useState('')
 
+  const [siteImageFiles, setSiteImageFiles] = useState({})
+  const [siteImagePreviews, setSiteImagePreviews] = useState({})
+
   const headers = token ? { Authorization: `Bearer ${token}` } : {}
 
   const buildResultPayload = (result) => ({
@@ -200,6 +203,29 @@ export default function AdminDashboard({ onClose, onDataChange }) {
       reader.readAsDataURL(file)
     }
   }
+
+  const handleSiteImageChange = (key) => (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      setSiteImageFiles((prev) => ({ ...prev, [key]: file }))
+      const reader = new FileReader()
+      reader.onload = (ev) => setSiteImagePreviews((prev) => ({ ...prev, [key]: ev.target.result }))
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const saveSiteImage = async (key) => {
+    const file = siteImageFiles[key]
+    if (!file) return setMessage('Please select an image first')
+    const url = await uploadImage(file)
+    if (url) {
+      await saveContent(key, url)
+      setSiteImageFiles((prev) => ({ ...prev, [key]: null }))
+      setSiteImagePreviews((prev) => ({ ...prev, [key]: '' }))
+    }
+  }
+
+  const SITE_IMAGE_KEYS = ['logo_url', 'hero_background', 'campus_image']
 
   const fetchSiteContent = async () => {
     if (!token) return
@@ -576,9 +602,25 @@ export default function AdminDashboard({ onClose, onDataChange }) {
             <h2 className="text-2xl font-bold mb-4">Site Content Editor</h2>
             {['hero_title', 'hero_subtitle', 'hero_cta', 'logo_url', 'hero_background', 'campus_title', 'campus_description', 'campus_image'].map((key) => (
               <div key={key} className="space-y-1">
-                <label className="block text-sm font-medium text-white/80">{key.replace('_', ' ').toUpperCase()}</label>
-                <input value={siteContent[key] || ''} onChange={(e) => setSiteContent((s) => ({ ...s, [key]: e.target.value }))} className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white" />
-                <button onClick={() => saveContent(key, siteContent[key] || '')} className="mt-1 bg-amber-300 text-slate-900 px-3 py-1 rounded-lg">Save</button>
+                <label className="block text-sm font-medium text-white/80">{key.replaceAll('_', ' ').toUpperCase()}</label>
+                {SITE_IMAGE_KEYS.includes(key) ? (
+                  <>
+                    {(siteImagePreviews[key] || siteContent[key]) && (
+                      <img src={siteImagePreviews[key] || resolveMediaUrl(siteContent[key])} alt={key} className="h-32 rounded-lg object-cover mb-2" />
+                    )}
+                    <input type="file" accept="image/*" onChange={handleSiteImageChange(key)} className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white file:text-slate-300 file:border-0 file:bg-white/5 file:px-2 file:py-1 file:rounded" />
+                    <input value={siteContent[key] || ''} onChange={(e) => setSiteContent((s) => ({ ...s, [key]: e.target.value }))} placeholder="Or paste image URL" className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white mt-1" />
+                    <div className="flex gap-2 mt-1">
+                      <button onClick={() => saveSiteImage(key)} disabled={uploading} className="bg-amber-300 text-slate-900 px-3 py-1 rounded-lg disabled:opacity-50">{uploading ? 'Uploading...' : 'Upload & Save'}</button>
+                      <button onClick={() => saveContent(key, siteContent[key] || '')} className="bg-slate-600 text-white px-3 py-1 rounded-lg">Save URL</button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <input value={siteContent[key] || ''} onChange={(e) => setSiteContent((s) => ({ ...s, [key]: e.target.value }))} className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white" />
+                    <button onClick={() => saveContent(key, siteContent[key] || '')} className="mt-1 bg-amber-300 text-slate-900 px-3 py-1 rounded-lg">Save</button>
+                  </>
+                )}
               </div>
             ))}
           </div>
