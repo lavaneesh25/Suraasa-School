@@ -1,0 +1,396 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700;800;900&family=Cormorant+Garamond:wght@500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Premium Gold Palette */
+  --gold: #FFD700;
+  --gold-light: #FFE44D;
+  --gold-warm: #E6C200;
+  --gold-deep: #B8960B;
+  --gold-rose: #FFDF33;
+
+  /* Premium Background Palette */
+  --rich-black: #0A1F44;
+  --onyx: #081833;
+  --jet: #0D2654;
+  --charcoal: #112D5A;
+
+  /* Premium Text Palette */
+  --warm-white: #FFFFFF;
+  --pearl: #EAEAEA;
+  --champagne: #1A3A6A;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+  background: #0A1F44;
+  color: #FFFFFF;
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+body::before {
+  display: none;
+}
+
+/* ===== PREMIUM SCROLLBAR ===== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--rich-black);
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--gold), var(--gold-deep));
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold-light);
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes float-bg {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes moveAround {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100vw); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes goldPulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); }
+  50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.4); }
+}
+
+@keyframes borderGlow {
+  0%, 100% { border-color: rgba(255, 215, 0, 0.15); }
+  50% { border-color: rgba(255, 215, 0, 0.4); }
+}
+
+@keyframes shineSlide {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}
+
+/* ===== PREMIUM GLASS CARD ===== */
+.glass {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass:hover {
+  border-color: rgba(255, 215, 0, 0.4);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(255, 215, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* ===== GLASSMORPHISM NAVBAR ===== */
+.navbar-glass {
+  background: rgba(10, 31, 68, 0.85) !important;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow:
+    0 4px 30px rgba(0, 0, 0, 0.3),
+    0 1px 0 rgba(255, 255, 255, 0.05) inset;
+}
+
+/* ===== HOVER LIFT CARDS ===== */
+.card-lift {
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
+}
+
+.card-lift:hover {
+  transform: translateY(-8px) scale(1.015);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.4),
+    0 0 40px rgba(255, 215, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* ===== TILT CARD SHINE ===== */
+.tilt-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.tilt-shine::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.08),
+    transparent
+  );
+  transition: left 0.5s ease;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.tilt-shine:hover::before {
+  left: 150%;
+}
+
+/* ===== PREMIUM BUTTON ===== */
+.btn-glow {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #FFD700 0%, #FFE44D 45%, #FFD700 55%, #E6C200 100%);
+  background-size: 200% 200%;
+  border: none;
+  color: #FFFFFF;
+  box-shadow:
+    0 4px 20px rgba(255, 215, 0, 0.4),
+    0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.btn-glow::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -100%;
+  width: 60%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.15),
+    transparent
+  );
+  transform: skewX(-20deg);
+  animation: shineSlide 3.5s ease-in-out infinite;
+}
+
+.btn-glow:hover {
+  transform: translateY(-3px) scale(1.02);
+  background-position: right center;
+  box-shadow:
+    0 8px 28px rgba(255, 215, 0, 0.5),
+    0 0 60px rgba(255, 215, 0, 0.15);
+}
+
+.btn-glow:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* ===== PREMIUM CARD HOVER ===== */
+.card-hover {
+  transition: all 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-10px) scale(1.015);
+  box-shadow:
+    0 30px 60px rgba(0, 0, 0, 0.4),
+    0 0 40px rgba(255, 215, 0, 0.12);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* ===== PREMIUM SECTION DIVIDER ===== */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 215, 0, 0.3) 20%, rgba(255, 215, 0, 0.6) 50%, rgba(255, 215, 0, 0.3) 80%, transparent 100%);
+  margin: 0 auto;
+  max-width: 600px;
+}
+
+/* ===== THICK GOLD SECTION BAR ===== */
+.gold-bar {
+  height: 8px;
+  background: linear-gradient(90deg, transparent 0%, #FFD700 15%, #FFE44D 50%, #FFD700 85%, transparent 100%);
+  margin: 0 auto;
+  border-radius: 4px;
+  box-shadow: 0 2px 12px rgba(255, 215, 0, 0.35), 0 0 24px rgba(255, 215, 0, 0.1);
+}
+
+/* ===== GOLD LEFT ACCENT BORDER ===== */
+.gold-accent-left {
+  border-left: 6px solid #FFD700;
+  padding-left: 1.5rem;
+  box-shadow: -4px 0 16px rgba(255, 215, 0, 0.25);
+}
+
+/* ===== GOLD HIGHLIGHT BOX ===== */
+.gold-highlight-box {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 215, 0, 0.25);
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(255, 215, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.gold-highlight-box:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 215, 0, 0.4);
+  box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+}
+
+/* ===== PREMIUM GOLD BUTTON (dark text) ===== */
+.btn-gold {
+  position: relative;
+  overflow: hidden;
+  background: #FFD700;
+  color: #FFFFFF;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border: 2px solid #FFD700;
+  box-shadow: 0 4px 20px rgba(255, 215, 0, 0.35);
+  transition: all 0.3s ease;
+}
+
+.btn-gold::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -100%;
+  width: 60%;
+  height: 200%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transform: skewX(-20deg);
+  animation: shineSlide 3.5s ease-in-out infinite;
+}
+
+.btn-gold:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5), 0 0 60px rgba(255, 215, 0, 0.15);
+  background: #FFE44D;
+}
+
+.btn-gold:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* ===== PREMIUM GOLD SHADOW ===== */
+.gold-shadow {
+  box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+}
+
+/* ===== GOLD SHIMMER TEXT ===== */
+.gold-shimmer {
+  background: linear-gradient(
+    110deg,
+    #E6C200 0%,
+    #FFD700 25%,
+    #FFE44D 50%,
+    #FFD700 75%,
+    #E6C200 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
+}
+
+/* ===== PREMIUM HEADING STYLE ===== */
+.heading-premium {
+  font-family: 'Playfair Display', serif;
+  letter-spacing: 0.02em;
+  text-shadow: 0 2px 12px rgba(255, 215, 0, 0.2);
+}
+
+/* ===== ADMISSIONS FLOAT ===== */
+.admissions-float {
+  animation: moveAround 10s linear infinite;
+  display: inline-block;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  background: linear-gradient(90deg, #FFD700, #FFE44D, #FFD700);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: moveAround 10s linear infinite, shimmer 3s linear infinite;
+  filter: drop-shadow(0 2px 8px rgba(230, 194, 0, 0.5));
+  padding: 0.2rem 0.6rem;
+  border: none;
+  border-radius: 999px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== PREMIUM INPUT STYLE ===== */
+.input-premium {
+  background: #0A1F44;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  color: #FFFFFF;
+  transition: all 0.3s ease;
+}
+
+.input-premium:focus {
+  outline: none;
+  border-color: #FFD700;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.15);
+}
+
+.input-premium::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ===== GOLD BORDER GLOW ===== */
+.gold-border-glow {
+  animation: borderGlow 3s ease-in-out infinite;
+}
+
+/* ===== GOLD PULSE ===== */
+.gold-pulse {
+  animation: goldPulse 3s ease-in-out infinite;
+}
+
+@layer components {
+  .gradient-text {
+    @apply bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 bg-clip-text text-transparent;
+  }
+}
