@@ -6,12 +6,18 @@ from .database import get_db
 import os
 import shutil
 from pathlib import Path
+import cloudinary
+import cloudinary.uploader
 
 router = APIRouter()
 
-# Create uploads directory if it doesn't exist
-UPLOAD_DIR = Path("uploads")
-UPLOAD_DIR.mkdir(exist_ok=True)
+
+# Cloudinary config from env vars
+cloudinary.config(
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET")
+)
 
 @router.post("/token", response_model=schemas.TokenResponse)
 def login(request: schemas.LoginRequest, db: Session = Depends(get_db)):
@@ -184,29 +190,17 @@ def register_admin(admin: schemas.AdminUserCreate, db: Session = Depends(get_db)
 @router.post("/upload")
 def upload_image(file: UploadFile = File(...), token: str = Depends(auth.oauth2_scheme)):
     auth.verify_token(token)
-    
-    # Validate file type
     ALLOWED_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.gif', '.webp'}
     file_ext = Path(file.filename).suffix.lower()
-    
     if file_ext not in ALLOWED_EXTENSIONS:
         raise HTTPException(status_code=400, detail="File type not allowed. Use: jpg, jpeg, png, gif, webp")
-    
-    # Generate unique filename
-    import uuid
-    unique_filename = f"{uuid.uuid4()}{file_ext}"
-    file_path = UPLOAD_DIR / unique_filename
-    
     try:
-        # Save the file
-        with open(file_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
-        
-        # Return the relative path that can be used as image URL
+        # Upload to Cloudinary
+        result = cloudinary.uploader.upload(file.file, resource_type="image")
         return {
-            "url": f"/uploads/{unique_filename}",
-            "filename": unique_filename,
-            "message": "Image uploaded successfully"
+            "url": result["secure_url"],
+            "public_id": result["public_id"],
+            "message": "Image uploaded to Cloudinary"
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to upload image: {str(e)}")
